@@ -4,68 +4,89 @@ import { BiPhone, BiSend, BiUser } from 'react-icons/bi';
 import { BsLinkedin, BsTwitter } from 'react-icons/bs';
 import { CgMail } from 'react-icons/cg';
 import { Link } from 'react-router-dom';
+import { AxiosError } from 'axios';
 
 const ContactForm = () => {
     const [formState, setFormState] = useState<{
         fullname: string;
         email: string;
         subject: string;
-        message: string
+        message: string;
     }>({
         fullname: '',
         email: '',
         subject: '',
         message: ''
     });
+
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [focused, setFocused] = useState<string>('');
 
-    const [focused, setFocused] = useState('');
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            setIsSubmitting(true)
-            // await apiContactUs(formState)
-            setIsSubmitting(false)
-            toast.push(
-                <Notification
-                    title={'Success'}
-                    type={'success'}
-                >
-                    Successfully submitted
-                </Notification>,
-            )
-            setFormState({
-                fullname: '',
-                email: '',
-                subject: '',
-                message: ''
-            })
-        } catch (err) {
-            setIsSubmitting(false)
-            toast.push(
-                <Notification
-                    title={err?.response?.data.message}
-                    type={'danger'}
-                >
-                    {err?.response?.data.message}
-                </Notification>,
-            )
-        }
-    };
-
-    const handleChange = (e) => {
+    // Handle input changes
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormState({
             ...formState,
             [e.target.name]: e.target.value
         });
     };
 
+    // Handle form submission
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Basic validation for empty fields
+        if (!formState.fullname || !formState.email || !formState.message) {
+            toast.push(
+                <Notification title="Error" type="danger">
+                    Please fill out all required fields.
+                </Notification>
+            );
+            return;
+        }
+
+        try {
+            setIsSubmitting(true);
+            // Simulating form submission (replace with your actual API call)
+            // await apiContactUs(formState);
+            setIsSubmitting(false);
+
+            toast.push(
+                <Notification title="Success" type="success">
+                    Successfully submitted!
+                </Notification>
+            );
+
+            setFormState({
+                fullname: '',
+                email: '',
+                subject: '',
+                message: ''
+            });
+        }catch (err: unknown) {
+            setIsSubmitting(false);
+            console.error("Error:", err);
+            if (err instanceof Error) {
+                toast.push(
+                    <Notification title="Error" type="danger">
+                        {err.message || 'Something went wrong.'}
+                    </Notification>
+                );
+            } else {
+                toast.push(
+                    <Notification title="Error" type="danger">
+                        {'An unknown error occurred.'}
+                    </Notification>
+                );
+            }
+        }
+        
+    };
+
     return (
         <div className="bg-white py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    {/* Left Column - Contact Info */}
+
                     <div className="space-y-8">
                         <div>
                             <h2 className="text-4xl font-bold text-gray-900 mb-4">Let's get in touch!</h2>
@@ -75,7 +96,7 @@ const ContactForm = () => {
                         </div>
 
                         <div className="space-y-6">
-                            {/* Contact Details */}
+
                             <div className="flex items-center space-x-4">
                                 <div className="bg-purple-100 p-3 rounded-lg">
                                     <BiPhone className="w-6 h-6 text-primary" />
@@ -100,8 +121,6 @@ const ContactForm = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Social Links */}
                         <div>
                             <h3 className="text-xl font-semibold text-gray-900 mb-4">Connect With Us</h3>
                             <div className="flex space-x-4">
@@ -119,8 +138,7 @@ const ContactForm = () => {
                     <div className="bg-gray-50 rounded-2xl shadow-lg p-4 sm:p-8">
                         <form onSubmit={handleSubmit} className="space-y-3">
                             <div className="relative">
-                                <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-all duration-300 ${focused === 'fullName' || formState.fullname ? 'text-primary' : 'text-gray-400'
-                                    }`}>
+                                <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-all duration-300 ${focused === 'fullName' || formState.fullname ? 'text-primary' : 'text-gray-400'}`}>
                                     <BiUser className="w-5 h-5" />
                                 </div>
                                 <input
@@ -137,8 +155,7 @@ const ContactForm = () => {
                             </div>
 
                             <div className="relative">
-                                <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-all duration-300 ${focused === 'email' || formState.email ? 'text-primary' : 'text-gray-400'
-                                    }`}>
+                                <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-all duration-300 ${focused === 'email' || formState.email ? 'text-primary' : 'text-gray-400'}`}>
                                     <CgMail className="w-5 h-5" />
                                 </div>
                                 <input
@@ -154,24 +171,7 @@ const ContactForm = () => {
                                 />
                             </div>
 
-                            {/* <div className="relative">
-                                <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-all duration-300 ${focused === 'subject' || formState.subject ? 'text-primary' : 'text-gray-400'
-                                    }`}>
-                                    <BiMessageSquare className="w-5 h-5" />
-                                </div>
-                                <input
-                                    type="text"
-                                    name="subject"
-                                    placeholder="Subject"
-                                    value={formState.subject}
-                                    onChange={handleChange}
-                                    onFocus={() => setFocused('subject')}
-                                    onBlur={() => setFocused('')}
-                                    className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all"
-                                    required
-                                />
-                            </div> */}
-
+                            {/* Message */}
                             <div className="relative">
                                 <textarea
                                     name="message"

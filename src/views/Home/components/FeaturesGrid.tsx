@@ -64,12 +64,16 @@ const solutions = [
 
 const FeaturesGrid: React.FC = () => {
   return (
-    <div className="py-16 px-4 md:px-8 bg-gray-50">
+    // UPDATE: Change background from gray-50 to white
+    <div className="py-16 px-4 md:px-8 bg-white">
+
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          {/* UPDATE: Heading font size and weight */}
+          <h2 className="text-3xl md:text-5xl font-semibold text-gray-800 mb-6">
             Our Comprehensive Solutions
           </h2>
+
           <div className="h-1 w-24 bg-primary mx-auto rounded-full"></div>
         </div>
 
@@ -78,20 +82,29 @@ const FeaturesGrid: React.FC = () => {
             return (
               <div
                 key={index}
-                className="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-xl"
+                // UPDATE: Card styling for hover shadow, rounded-xl
+                className="bg-white rounded-2xl shadow-md hover:shadow-2xl transform transition-all duration-300 hover:scale-105"
               >
                 <div className="p-6">
-                  <div className={`${solution.color} inline-flex p-3 rounded-lg text-white mb-4`}>
+                  {/* UPDATE: Icon wrapper padding and hover effect */}
+                  <div className={`${solution.color} inline-flex p-4 rounded-xl text-white mb-6 hover:shadow-lg transition-all`}>
                     {solution.icon}
                   </div>
+
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">
                     {solution.title}
                   </h3>
+
                   <p className="text-gray-600 leading-relaxed">
                     {solution.description}
                   </p>
+
+                  {/* UPDATE: Optional - Small primary color bar under text */}
+                  <div className="mt-6 h-1 w-16 bg-primary rounded-full"></div>
                 </div>
-                <div className={`h-1 w-full absolute bottom-0 ${solution.color} opacity-75`}></div>
+
+                {/* REMOVE: This bottom color div, no need anymore */}
+                {/* <div className={`h-1 w-full absolute bottom-0 ${solution.color} opacity-75`}></div> */}
               </div>
             );
           })}
